@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
         recyclerView.adapter = adapter
 
         requestPermissions()
-        fetchDataFromAPI()
     }
 
     fun requestPermissions() {
@@ -88,14 +87,20 @@ class MainActivity : AppCompatActivity(), LocationListener {
     }
 
     override fun onLocationChanged(newLoc: Location) {
-        Toast.makeText (this, "Location=${newLoc.latitude},${newLoc.longitude}", Toast.LENGTH_LONG).show()
+        //Toast.makeText (this, "Location=${newLoc.latitude},${newLoc.longitude}", Toast.LENGTH_LONG).show()
         currentLocationLat = newLoc.latitude
         currentLocationLon = newLoc.longitude
+        fetchDataFromAPI(currentLocationLat, currentLocationLon)
     }
 
 
-    private fun fetchDataFromAPI() {
-        val apiUrl = "https://hikar.org/webapp/map?bbox=-1.5,50.9,-1.4,51&layers=poi&outProj=4326&format=json"
+    private fun fetchDataFromAPI(currentLocationLat: Double, currentLocationLon: Double) {
+        val north = currentLocationLat + 0.01
+        val south = currentLocationLat - 0.01
+        val west = currentLocationLon - 0.01
+        val east = currentLocationLon + 0.01
+        val apiUrl = "https://hikar.org/webapp/map?bbox=${west},${south},${east},${north}&layers=poi&outProj=4326&format=json"
+        Toast.makeText (this, "Location=${currentLocationLat},${currentLocationLon}", Toast.LENGTH_LONG).show()
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
