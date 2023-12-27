@@ -11,6 +11,10 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
+                .replace(R.id.mapFragmentContainer, MapFrag())
+                .commit()
+
+            supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, RecycleFrag())
                 .commit()
         }
