@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "pointsofinterest")
 
 data class Item(
-    @PrimaryKey val osm_id: Long,
+    @PrimaryKey(autoGenerate = true) val id : Long,
+    @ColumnInfo val osm_id: Long,
     @ColumnInfo val lon: Double,
     @ColumnInfo val lat: Double,
     @ColumnInfo val name: String,

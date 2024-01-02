@@ -70,10 +70,11 @@ class MapFrag : Fragment(), LocationListener {
         mapView.overlays.add(mLocationOverlay)
 
         // Add a marker at a specific location
-        val startPoint1 = GeoPoint(51.573316595, -0.4133247) // New York coordinates
+        /*
+        val startPoint1 = GeoPoint(50.915860, -1.405040) // New York coordinates
         addMarker2(startPoint1, "test", "test")
-
-        //loadPoints()
+*/
+        loadPoints()
 
         return rootView
     }
@@ -139,19 +140,21 @@ class MapFrag : Fragment(), LocationListener {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
+                //var allPoints = db.PointsOfInterestDAO().getPointsByFeature("pub")
                 var allPoints = db.PointsOfInterestDAO().getAllPoints()
                 allPoints.forEachIndexed { index, element ->
                     //println("$element")
                     //var lat = element.pointLat.toDouble()
                     //var lon = element.pointLon.toDouble()
                     //val newMarker = OverlayItem(element.pointName,element.pointDescription,GeoPoint(element.pointLat, element.pointLat)
-                    addMarker(
+                    Log.e("TAG", element.name)
+                    val latlon = GeoPoint(element.lat, element.lon)
+                    addMarker2(
+                        latlon,
                         element.name,
-                        element.featureType,
-                        element.lon,
-                        element.lat,
-                        mapView
+                        element.featureType
                     )
+                    //addMarker(element.name, element.featureType, element.lon, element.lat, mapView)
                 }
             }
         }

@@ -8,6 +8,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -102,8 +103,13 @@ class RecycleFrag : Fragment(R.layout.recycle_layout), LocationListener {
             try {
                 val response = URL(apiUrl).readText()
                 val items = parseJson(response)
+
+                val db = PointsOfInterestDatabase.getDatabase(requireContext().applicationContext)
+                var items2 = db.PointsOfInterestDAO().getAllPoints()
+
+
                 withContext(Dispatchers.Main) {
-                    adapter.setItems(items)
+                    adapter.setItems(items2)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -123,7 +129,14 @@ class RecycleFrag : Fragment(R.layout.recycle_layout), LocationListener {
             val name = jsonObject.getString("name")
             val featureType = jsonObject.getString("featureType")
 
-            val item = Item(osmId, lon, lat, name, featureType)
+            val db = PointsOfInterestDatabase.getDatabase(requireContext().applicationContext)
+
+            val item = Item(0L, osmId, lon, lat, name, featureType)
+            Log.d("TAG", name)
+
+            db.PointsOfInterestDAO().insert(item)
+
+
             items.add(item)
         }
 
