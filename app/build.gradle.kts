@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.newrealrealassessment"
-        minSdk = 26
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -48,6 +48,8 @@ dependencies {
 
     implementation("org.osmdroid:osmdroid-android:6.1.17")
     implementation("androidx.preference:preference-ktx:1.2.1")
+
+    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

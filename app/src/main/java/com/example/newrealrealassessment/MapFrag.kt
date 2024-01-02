@@ -17,6 +17,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -37,13 +39,14 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.net.URL
 
 
-class MapFrag : Fragment(), LocationListener {
+class MapFrag : Fragment() {
 
     private lateinit var mapView: MapView
-    private var currentLocationLat: Double = 0.0
-    private var currentLocationLon: Double = 0.0
     private lateinit var mLocationOverlay: MyLocationNewOverlay
-
+    private lateinit var roomViewModel: RoomViewModel
+    private lateinit var locationViewModel: LocationViewModel
+    private var currentLongitude: Double = 0.0
+    private var currentLatitude: Double = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +54,10 @@ class MapFrag : Fragment(), LocationListener {
         savedInstanceState: Bundle?
     ): View? {
         val context = requireContext()
-        Configuration.getInstance().load(context, androidx.preference.PreferenceManager.getDefaultSharedPreferences(context))
+        Configuration.getInstance().load(
+            context,
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+        )
 
         val rootView = inflater.inflate(R.layout.fragment_map, container, false)
         mapView = rootView.findViewById(R.id.mapView)
@@ -59,119 +65,69 @@ class MapFrag : Fragment(), LocationListener {
         mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
         mapView.setMultiTouchControls(true)
         val mapController = mapView.controller
-        mapController.setZoom(15.0)
-        val startPoint = GeoPoint(48.8583, 2.2944) // Set a default location (Paris coordinates)
+        mapController.setZoom(17.0)
+        val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
-
-        requestPermissions()
+        roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
+        locationViewModel = ViewModelProvider(requireActivity()).get(LocationViewModel::class.java)
 
         mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
         mLocationOverlay.enableMyLocation()
         mapView.overlays.add(mLocationOverlay)
 
-        // Add a marker at a specific location
-        /*
-        val startPoint1 = GeoPoint(50.915860, -1.405040) // New York coordinates
-        addMarker2(startPoint1, "test", "test")
-*/
-        loadPoints()
-
         return rootView
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    private fun requestPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                0
-            )
-        } else {
-            startGps()
-        }
-    }
+        locationViewModel.currentLatitude.observe(viewLifecycleOwner, Observer { newLatitude ->
+            Log.e("CurrentLat", newLatitude.toString())
+            currentLatitude = newLatitude
+            updateMapView()
+        })
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            0 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startGps()
-                } else {
-                    AlertDialog.Builder(requireContext())
-                        .setPositiveButton("OK", null)
-                        .setMessage("GPS will not work as you have denied access")
-                        .show()
-                }
-            }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun startGps() {
-        val mgr = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        mgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
-    }
-
-    override fun onLocationChanged(newLoc: Location) {
-        currentLocationLat = newLoc.latitude
-        currentLocationLon = newLoc.longitude
-        val newGeoPoint = GeoPoint(newLoc.latitude, newLoc.longitude)
-        mapView.controller.setCenter(newGeoPoint)
-        mapView.controller.setZoom(15.0)
-        mLocationOverlay.enableMyLocation()
-        mapView.overlays.add(mLocationOverlay)
-        mapView.invalidate() // Refresh the map view
+        locationViewModel.currentLongitude.observe(viewLifecycleOwner, Observer { newLongitude ->
+            Log.e("CurrentLong", newLongitude.toString())
+            currentLongitude = newLongitude
+            updateMapView()
+        })
     }
 
     fun loadPoints() {
         mapView.overlayManager.clear()
 
-        val db = PointsOfInterestDatabase.getDatabase(requireContext().applicationContext)
-
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                //var allPoints = db.PointsOfInterestDAO().getPointsByFeature("pub")
-                var allPoints = db.PointsOfInterestDAO().getAllPoints()
-                allPoints.forEachIndexed { index, element ->
-                    //println("$element")
-                    //var lat = element.pointLat.toDouble()
-                    //var lon = element.pointLon.toDouble()
-                    //val newMarker = OverlayItem(element.pointName,element.pointDescription,GeoPoint(element.pointLat, element.pointLat)
-                    Log.e("TAG", element.name)
-                    val latlon = GeoPoint(element.lat, element.lon)
-                    addMarker2(
-                        latlon,
-                        element.name,
-                        element.featureType
-                    )
-                    //addMarker(element.name, element.featureType, element.lon, element.lat, mapView)
-                }
+        roomViewModel.getAllPoints().observe(viewLifecycleOwner, Observer { points ->
+            points.forEachIndexed { index, element ->
+                val latlon = GeoPoint(element.lat, element.lon)
+                addMarker2(
+                    latlon,
+                    element.name,
+                    element.featureType
+                )
             }
-        }
+            mapView.invalidate()
+        })
     }
 
-    fun addMarker(name: String, featureType: String, lon : Double, lat : Double, map1 : MapView){
+    private fun updateMapView() {
+        clearAllMarkers()
+        val newGeoPoint = GeoPoint(currentLatitude, currentLongitude)
+        mapView.controller.setCenter(newGeoPoint)
+        mLocationOverlay.enableMyLocation()
+        mapView.overlays.add(mLocationOverlay)
+        mapView.invalidate()
+        loadPoints()
+    }
 
-        val markerGestureListener = object:ItemizedIconOverlay.OnItemGestureListener<OverlayItem>
-        {
-            override fun onItemLongPress(i: Int, item:OverlayItem ) : Boolean
-            {
+    fun addMarker(name: String, featureType: String, lon: Double, lat: Double, map1: MapView) {
+        val markerGestureListener = object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
+            override fun onItemLongPress(i: Int, item: OverlayItem): Boolean {
                 Toast.makeText(requireContext(), item.snippet, Toast.LENGTH_SHORT).show()
                 return true
             }
 
-            override fun onItemSingleTapUp(i: Int, item:OverlayItem): Boolean
-            {
+            override fun onItemSingleTapUp(i: Int, item: OverlayItem): Boolean {
                 Toast.makeText(requireContext(), item.title, Toast.LENGTH_SHORT).show()
                 return true
             }
@@ -180,21 +136,22 @@ class MapFrag : Fragment(), LocationListener {
         val newMarker = OverlayItem(name, featureType, GeoPoint(lat, lon))
         items.addItem(newMarker)
         map1.overlays.add(items)
-
     }
 
     private fun addMarker2(geoPoint: GeoPoint, name: String, featureType: String) {
         val marker = Marker(mapView)
         marker.position = geoPoint
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        marker.title = name // Optional: Set a title
-        marker.snippet = featureType // Optional: Set a snippet
-        Log.e("MyTag", name)
-
+        marker.title = name
+        marker.snippet = featureType
         mapView.overlays.add(marker)
         mapView.invalidate()
     }
 
+    fun clearAllMarkers() {
+        mapView.overlays.clear() // Clear all overlays, including markers
+        mapView.invalidate() // Refresh the map view
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

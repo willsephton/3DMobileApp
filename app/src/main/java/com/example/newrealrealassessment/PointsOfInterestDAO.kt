@@ -1,5 +1,6 @@
 package com.example.newrealrealassessment
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -16,7 +17,7 @@ interface PointsOfInterestDAO {
     fun getPointsByFeature(featureType: String): List<Item>
 
     @Query("SELECT * FROM pointsofinterest")
-    fun getAllPoints(): List<Item>
+    fun getAllPoints(): LiveData<List<Item>>
 
     @Query("DELETE FROM pointsofinterest\n")
     fun deleteAllPoints()
