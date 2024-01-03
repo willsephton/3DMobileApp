@@ -68,7 +68,7 @@ class MapFrag : Fragment() {
         mapController.setZoom(17.0)
         val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
-        roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
+        roomViewModel = ViewModelProvider(requireActivity()).get(RoomViewModel::class.java)
         locationViewModel = ViewModelProvider(requireActivity()).get(LocationViewModel::class.java)
 
         mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
@@ -92,12 +92,30 @@ class MapFrag : Fragment() {
             currentLongitude = newLongitude
             updateMapView()
         })
+
+        roomViewModel.pointsBySelectedFeature.observe(viewLifecycleOwner) { points ->
+            Log.e("MapFrag", "Markers grabbed by feature: $points")
+            clearAllMarkers() // Clear existing markers before adding new ones
+            points?.let { list ->
+                list.forEach { element ->
+                    val latlon = GeoPoint(element.lat, element.lon)
+                    addMarker2(
+                        latlon,
+                        element.name,
+                        element.featureType
+                    )
+                }
+            }
+            mapView.invalidate()
+        }
     }
 
-    fun loadPoints() {
+    /*fun loadPoints() {
         mapView.overlayManager.clear()
 
-        roomViewModel.getAllPoints().observe(viewLifecycleOwner, Observer { points ->
+        roomViewModel.pointsBySelectedFeature.observe(viewLifecycleOwner) { points ->
+            Log.e("MapFrag", "Markers grabbed by feature: $points")
+            clearAllMarkers() // Clear existing markers before adding new ones
             points.forEachIndexed { index, element ->
                 val latlon = GeoPoint(element.lat, element.lon)
                 addMarker2(
@@ -107,8 +125,8 @@ class MapFrag : Fragment() {
                 )
             }
             mapView.invalidate()
-        })
-    }
+        }
+    }*/
 
     private fun updateMapView() {
         clearAllMarkers()
@@ -117,7 +135,6 @@ class MapFrag : Fragment() {
         mLocationOverlay.enableMyLocation()
         mapView.overlays.add(mLocationOverlay)
         mapView.invalidate()
-        loadPoints()
     }
 
     fun addMarker(name: String, featureType: String, lon: Double, lat: Double, map1: MapView) {
@@ -149,7 +166,9 @@ class MapFrag : Fragment() {
     }
 
     fun clearAllMarkers() {
-        mapView.overlays.clear() // Clear all overlays, including markers
+        mapView.overlays
+            .filterIsInstance<Marker>() // Filter only Marker overlays
+            .forEach { mapView.overlays.remove(it) } // Remove each marker
         mapView.invalidate() // Refresh the map view
     }
 

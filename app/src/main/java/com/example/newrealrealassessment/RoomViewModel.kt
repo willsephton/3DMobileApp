@@ -13,7 +13,7 @@ import androidx.lifecycle.switchMap
 class RoomViewModel(app: Application): AndroidViewModel(app)  {
     // Get a reference to the database, using the Application object
     var db = PointsOfInterestDatabase.getDatabase(app)
-    var points : LiveData<List<Item>>
+    lateinit var points : LiveData<List<Item>>
     var selectedFeature = MutableLiveData<String>()
 
 
@@ -28,16 +28,16 @@ class RoomViewModel(app: Application): AndroidViewModel(app)  {
     // When we initialise the ViewModel, get the LiveData from the DAO
     // The variable 'students' will always contain the latest LiveData.
     init {
-        points = db.PointsOfInterestDAO().getAllPoints()
+        //points = db.PointsOfInterestDAO().getAllPoints()
         setFeatureChoice("")
         // Observe changes to selectedFeature directly within the ViewModel
 
     }
 
     // Return the LiveData, so it can be observed, e.g. from the MainActivity
-    fun getAllPoints(): LiveData<List<Item>> {
+    /*fun getAllPoints(): LiveData<List<Item>> {
         return points
-    }
+    }*/
 
     fun setFeatureChoice(feature: String) {
         selectedFeature.value = feature
@@ -50,11 +50,6 @@ class RoomViewModel(app: Application): AndroidViewModel(app)  {
         return selectedFeature
     }
 
-    fun getPointsByFeature(feature: String): LiveData<List<Item>> {
-        Log.e("gettingpoints", "hererererererere")
-        points = db.PointsOfInterestDAO().getPointsByFeature(feature)
-        return points
-    }
 
 
 }
