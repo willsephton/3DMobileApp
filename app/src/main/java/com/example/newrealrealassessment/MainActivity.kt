@@ -3,6 +3,7 @@ package com.example.newrealrealassessment
 import android.annotation.SuppressLint
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -19,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     private lateinit var locationViewModel: LocationViewModel
     private lateinit var locationManager: LocationManager
+    private lateinit var roomViewModel: RoomViewModel
 
     private var north: Double = 0.0
     private var south: Double = 0.0
@@ -48,6 +51,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
         // Initialize LocationManager
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
+
+
         requestPermissions()
 
         if (savedInstanceState == null) {
@@ -60,6 +66,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 .commit()
         }
     }
+
 
     fun requestPermissions() {
 
@@ -109,6 +116,16 @@ class MainActivity : AppCompatActivity(), LocationListener {
         return true
     }
 
+    val featureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                it.data?.apply {
+                    val feature = this.getStringExtra("featureChoice") ?: "" // false is a default value
+                    roomViewModel.setFeatureChoice(feature)
+                }
+            }
+        }
+
 
     override fun onOptionsItemSelected(item: MenuItem) : Boolean {
         when(item.itemId) {
@@ -127,11 +144,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 }
             }
             R.id.menu2 -> {
-                /*
-                val intent = Intent(this,MyPrefsActivity::class.java)
-                startActivity(intent)
-                return true */
-                Toast.makeText(getApplicationContext(), "menu2", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "menu2", Toast.LENGTH_SHORT).show();
+                val intent = Intent(this,FeatureChoice::class.java)
+                featureLauncher.launch(intent)
+                return true
+
             }
 
 
@@ -194,7 +211,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
             val db = PointsOfInterestDatabase.getDatabase(this.applicationContext)
 
-            val item = Item(0L, osmId, lon, lat, name, featureType)
+            val item = Item(osmId, lon, lat, name, featureType)
             //Log.d("parseJSON", name)
 
             db.PointsOfInterestDAO().insert(item)

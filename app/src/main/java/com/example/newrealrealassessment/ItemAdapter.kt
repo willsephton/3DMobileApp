@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -38,7 +37,7 @@ class ItemAdapter(private val itemList: MutableList<Item>) :
         return itemList.size
     }
 
-    fun setItems(items: List<Item>) {
+    fun setItems(items: MutableList<Item>) {
         itemList.clear()
         itemList.addAll(items)
         notifyDataSetChanged()

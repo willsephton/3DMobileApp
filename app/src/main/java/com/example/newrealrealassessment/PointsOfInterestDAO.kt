@@ -14,13 +14,16 @@ interface PointsOfInterestDAO {
     fun getPointById(osm_id: Long): Item?
 
     @Query("SELECT * FROM pointsofinterest WHERE featureType=:featureType")
-    fun getPointsByFeature(featureType: String): List<Item>
+    fun getPointsByFeature(featureType: String): LiveData<List<Item>>
 
     @Query("SELECT * FROM pointsofinterest")
     fun getAllPoints(): LiveData<List<Item>>
 
-    @Query("DELETE FROM pointsofinterest\n")
+    @Query("DELETE FROM pointsofinterest")
     fun deleteAllPoints()
+
+    @Query("SELECT DISTINCT featureType FROM pointsofinterest")
+    suspend fun getAllFeatureTypes(): List<String>
 
     @Insert
     fun insert(item: Item) : Long
