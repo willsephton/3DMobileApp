@@ -17,6 +17,7 @@ class ItemAdapter(private val itemList: MutableList<Item>) :
         val latTextView: TextView = itemView.findViewById(R.id.textViewLat)
         val nameTextView: TextView = itemView.findViewById(R.id.textViewName)
         val featureTypeTextView: TextView = itemView.findViewById(R.id.textViewFeatureType)
+        val distanceTextView: TextView = itemView.findViewById(R.id.textViewDistance) // New TextView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -32,6 +33,11 @@ class ItemAdapter(private val itemList: MutableList<Item>) :
         holder.latTextView.text = "Latitude: ${currentItem.lat}"
         holder.nameTextView.text = "Name: ${currentItem.name}"
         holder.featureTypeTextView.text = "Feature Type: ${currentItem.featureType}"
+
+        val distanceInKm = currentItem.distance / 1000 // Convert meters to kilometers
+        val formattedDistance = String.format("%.2f", distanceInKm) // Round to 2 decimal places
+
+        holder.distanceTextView.text = "Distance: ${formattedDistance}km"
     }
     override fun getItemCount(): Int {
         return itemList.size
