@@ -28,7 +28,7 @@ class RecycleFrag : Fragment(R.layout.recycle_layout) {
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = ItemAdapter(mutableListOf()) // Initialize with an empty list
+        adapter = ItemAdapter(mutableListOf(), requireContext()) // Initialize with an empty list
         recyclerView.adapter = adapter
         roomViewModel = ViewModelProvider(requireActivity()).get(RoomViewModel::class.java)
         locationViewModel = ViewModelProvider(requireActivity()).get(LocationViewModel::class.java)
