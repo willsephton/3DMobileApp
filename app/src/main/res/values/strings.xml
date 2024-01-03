@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">newrealrealassessment</string>
-    <string name="menu1">menu1</string>
-    <string name="menu2">menu2</string>
+    <string name="app_name">Will Sephton</string>
+    <string name="menu1">Delete All Points From DB</string>
+    <string name="menu2">Choose A Feature</string>
+    <string name="menu3">OpenGL</string>
     <string name="featureChoice">Feature Choice</string>
     <string name="submit">submit</string>
 </resources>
