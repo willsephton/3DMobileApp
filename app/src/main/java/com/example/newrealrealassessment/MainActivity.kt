@@ -144,9 +144,15 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 }
             }
             R.id.menu2 -> {
-                        Toast.makeText(getApplicationContext(), "menu2", Toast.LENGTH_SHORT).show();
                 val intent = Intent(this,FeatureChoice::class.java)
                 featureLauncher.launch(intent)
+                return true
+
+            }
+            R.id.menu3 -> {
+                Toast.makeText(getApplicationContext(), "OpenGL", Toast.LENGTH_SHORT).show();
+                val intent = Intent(this,OpenGLActivity::class.java)
+                startActivity(intent)
                 return true
 
             }

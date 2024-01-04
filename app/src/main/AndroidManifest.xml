@@ -29,8 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FeatureChoice" android:label="@string/featureChoice">
-        </activity>
+        <activity android:name=".FeatureChoice" android:label="@string/featureChoice"></activity>
+        <activity android:name=".OpenGLActivity" android:label="@string/opengl"></activity>
     </application>
 
 </manifest>
