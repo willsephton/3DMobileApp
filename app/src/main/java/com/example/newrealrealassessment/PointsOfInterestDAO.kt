@@ -22,9 +22,6 @@ interface PointsOfInterestDAO {
     @Query("DELETE FROM pointsofinterest")
     fun deleteAllPoints()
 
-    @Query("SELECT DISTINCT featureType FROM pointsofinterest")
-    suspend fun getAllFeatureTypes(): List<String>
-
     @Insert
     fun insert(item: Item) : Long
 

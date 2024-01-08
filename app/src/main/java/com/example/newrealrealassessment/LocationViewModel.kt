@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class LocationViewModel : ViewModel() {
-    // Declare variables to store latitude and longitude
     private val _currentLatitude = MutableLiveData<Double>(0.0)
     val currentLatitude: LiveData<Double>
         get() = _currentLatitude
@@ -16,7 +15,6 @@ class LocationViewModel : ViewModel() {
     val currentLongitude: LiveData<Double>
         get() = _currentLongitude
 
-    // Function to update the location
     fun updateLocation(location: Location) {
         _currentLatitude.value = location.latitude
         _currentLongitude.value = location.longitude

@@ -21,30 +21,29 @@ class RecycleFrag : Fragment(R.layout.recycle_layout) {
     private lateinit var locationViewModel: LocationViewModel
     private var currentLongitude: Double = 0.0
     private var currentLatitude: Double = 0.0
-    private lateinit var items: List<Item>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = ItemAdapter(mutableListOf(), requireContext()) // Initialize with an empty list
+        adapter = ItemAdapter(mutableListOf(), requireContext())
         recyclerView.adapter = adapter
         roomViewModel = ViewModelProvider(requireActivity()).get(RoomViewModel::class.java)
         locationViewModel = ViewModelProvider(requireActivity()).get(LocationViewModel::class.java)
 
         locationViewModel.currentLatitude.observe(viewLifecycleOwner, Observer { newLatitude ->
-            Log.e("CurrentLat", newLatitude.toString())
+            //Log.e("CurrentLat", newLatitude.toString())
             currentLatitude = newLatitude
         })
 
         locationViewModel.currentLongitude.observe(viewLifecycleOwner, Observer { newLongitude ->
-            Log.e("CurrentLong", newLongitude.toString())
+            //Log.e("CurrentLong", newLongitude.toString())
             currentLongitude = newLongitude
         })
 
         roomViewModel.pointsBySelectedFeature.observe(viewLifecycleOwner) { points ->
-            Log.e("RecyclerFrag", "Points grabbed by feature: $points")
+            //Log.e("RecyclerFrag", "Points grabbed by feature: $points")
             points?.let {
                 val mutablePoints = it.toMutableList()
                 for (item in mutablePoints) {
@@ -56,7 +55,7 @@ class RecycleFrag : Fragment(R.layout.recycle_layout) {
             }
         }
 
-       //roomViewModel.setFeatureChoice("pub") // Set the feature you want to observe
+       //roomViewModel.setFeatureChoice("pub") // Set the feature
     }
 }
 

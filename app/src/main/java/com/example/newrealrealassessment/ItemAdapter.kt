@@ -9,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -19,7 +17,6 @@ class ItemAdapter(private val itemList: MutableList<Item>, private val context: 
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
         // Notification setup
-    private val channelID = "DISTANCE_CHANNEL"
     private val notifiedItems = mutableSetOf<Long>()
 
 
@@ -29,11 +26,11 @@ class ItemAdapter(private val itemList: MutableList<Item>, private val context: 
         val latTextView: TextView = itemView.findViewById(R.id.textViewLat)
         val nameTextView: TextView = itemView.findViewById(R.id.textViewName)
         val featureTypeTextView: TextView = itemView.findViewById(R.id.textViewFeatureType)
-        val distanceTextView: TextView = itemView.findViewById(R.id.textViewDistance) // New TextView
+        val distanceTextView: TextView = itemView.findViewById(R.id.textViewDistance)
     }
 
     init {
-        notifiedItems.clear() // Clear the set when the adapter is initialized
+        notifiedItems.clear()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -77,7 +74,7 @@ class ItemAdapter(private val itemList: MutableList<Item>, private val context: 
 
     fun sendNotification(item: Item) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelID = "DISTANCE_CHANNEL" // Set your channel ID here
+            val channelID = "DISTANCE_CHANNEL"
             val channelName = "Distance Channel"
             val channelDescription = "Notification channel for distance alerts"
             val importance = NotificationManager.IMPORTANCE_DEFAULT

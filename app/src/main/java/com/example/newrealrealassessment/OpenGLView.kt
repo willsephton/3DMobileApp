@@ -17,8 +17,8 @@ import javax.microedition.khronos.opengles.GL10
 
 class OpenGLView(ctx: Context, aSet: AttributeSet): GLSurfaceView(ctx, aSet), GLSurfaceView.Renderer {
     init {
-        setEGLContextClientVersion(2) // use GL ES 2
-        setRenderer(this) // set the renderer for this GLSurfaceView
+        setEGLContextClientVersion(2)
+        setRenderer(this)
     }
 
     val gpu = GPUInterface("default shader")
@@ -29,19 +29,15 @@ class OpenGLView(ctx: Context, aSet: AttributeSet): GLSurfaceView(ctx, aSet), GL
     val yellow = floatArrayOf(1f, 1f, 0f, 1f)
     val blue = floatArrayOf(0f, 0f, 1f, 1f)
 
-    // Camera Object
     val camera = Camera(0f, 0f, 0f)
 
-    //Create a variable to hold the view matrix
     val viewMatrix = GLMatrix()
 
-    //Create a variable to hold the projection matrix
     val projectionMatrix = GLMatrix()
 
     override fun onSurfaceCreated(p0: GL10?, p1: javax.microedition.khronos.egl.EGLConfig?) {
-        GLES20.glClearColor(0f, 0f, 0f, 1f) //sets background colour
+        GLES20.glClearColor(0f, 0f, 0f, 1f)
 
-        //Enable depth testing
         GLES20.glClearDepthf(1.0f)
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
 
@@ -60,7 +56,6 @@ class OpenGLView(ctx: Context, aSet: AttributeSet): GLSurfaceView(ctx, aSet), GL
                     0f, 1f, -6f
                 )
             )
-            //selects the current shader
             gpu.select()
         } catch (e: IOException) {
             Log.e("OpenGLBasic", e.stackTraceToString())
@@ -76,7 +71,6 @@ class OpenGLView(ctx: Context, aSet: AttributeSet): GLSurfaceView(ctx, aSet), GL
     }
 
     override fun onDrawFrame(p0: GL10?) {
-        //Clear settings from previous frame
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
         val ref_aVertex = gpu.getAttribLocation("aVertex")
@@ -85,19 +79,15 @@ class OpenGLView(ctx: Context, aSet: AttributeSet): GLSurfaceView(ctx, aSet), GL
         val ref_uView = gpu.getUniformLocation("uView")
         val ref_uProj = gpu.getUniformLocation("uProj")
 
-        // Reset view matrix to the identity matrix everytime we draw
         viewMatrix.setAsIdentityMatrix()
         viewMatrix.translate(-camera.position.x, -camera.position.y, -camera.position.z)
 
-        //Translate does not move camera. Translate defines the relationship between world coords and eye coords
-        //viewMatrix.translate(0f, 0f, -1f)
 
         gpu.sendMatrix(ref_uView, viewMatrix)
         gpu.sendMatrix(ref_uProj, projectionMatrix)
 
         fbuf?.apply{
 
-            // Define the translation for the view matrix needed with respect to the current camera coords
             gpu.setUniform4FloatArray(ref_uColour, blue)
             gpu.specifyBufferedDataFormat(ref_aVertex, this, 0)
             gpu.drawBufferedTriangles(0, 3)

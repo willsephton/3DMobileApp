@@ -20,7 +20,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -120,7 +119,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 it.data?.apply {
-                    val feature = this.getStringExtra("featureChoice") ?: "" // false is a default value
+                    val feature = this.getStringExtra("featureChoice") ?: ""
                     roomViewModel.setFeatureChoice(feature)
                 }
             }
@@ -130,10 +129,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onOptionsItemSelected(item: MenuItem) : Boolean {
         when(item.itemId) {
             R.id.menu1 -> {
-                /*
-                val intent = Intent(this,MapChooseActivity::class.java)
-                mapChooseLauncher.launch(intent)
-                return true */
 
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
@@ -165,12 +160,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     private fun fetchDataFromAPI() {
         locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
-        // Observe changes in latitude and longitude
         locationViewModel.currentLatitude.observe(this) { latitude ->
-            Log.e("mainactivity", latitude.toString())
+            //Log.e("mainactivity", latitude.toString())
 
             latitude?.let {
-                // Here, latitude contains the updated value
                 north = latitude + 0.01
                 south = latitude - 0.01
             }
@@ -178,7 +171,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
         locationViewModel.currentLongitude.observe(this) { longitude ->
             longitude?.let {
-                // Here, longitude contains the updated value
                 west = longitude - 0.01
                 east = longitude + 0.01
             }
@@ -227,9 +219,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     }
 
-    // Implement LocationListener methods
     override fun onLocationChanged(location: Location) {
-        // Update the location data in the ViewModel
         locationViewModel.updateLocation(location)
 
         fetchDataFromAPI()
