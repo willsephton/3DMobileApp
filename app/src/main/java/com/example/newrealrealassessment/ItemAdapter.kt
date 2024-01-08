@@ -9,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -33,7 +31,7 @@ class ItemAdapter(private val itemList: MutableList<Item>, private val context: 
     }
 
     init {
-        notifiedItems.clear() // Clear the set when the adapter is initialized
+        notifiedItems.clear()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {

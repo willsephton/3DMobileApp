@@ -16,11 +16,13 @@ import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
 import com.example.newrealrealassessment.gpuinterface.GPUInterface
+import freemap.openglwrapper.GLMatrix
 
 
 class OpenGLView(ctx: Context, val onTextureAvailableCallback: (SurfaceTexture) -> Unit) :
     GLSurfaceView(ctx), GLSurfaceView.Renderer {
 
+    lateinit var orientationMatrix: GLMatrix
     private var textureInterface: GPUInterface? = null
     private var vbuf: FloatBuffer? = null
     private var cameraFeedSurfaceTexture: SurfaceTexture? = null

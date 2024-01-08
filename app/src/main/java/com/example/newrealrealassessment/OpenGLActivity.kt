@@ -12,17 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Surface
-import android.widget.Button
 import androidx.appcompat.app.AlertDialog
-import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.pm.ShortcutInfoCompat
 import freemap.openglwrapper.GLMatrix
 
 
@@ -46,14 +42,14 @@ class OpenGLActivity: AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val openglview = OpenGLView(this) {
+        glView = OpenGLView(this) {
             Log.d("CAMERAXGL", "Starting camera")
             surfaceTexture = it
             if (!startCamera()) {
                 ActivityCompat.requestPermissions(this, permissions, 0)
             }
         }
-        setContentView(openglview)
+        setContentView(glView)
 
 
         val sMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -62,25 +58,6 @@ class OpenGLActivity: AppCompatActivity(), SensorEventListener {
         sMgr.registerListener(this, accel, SensorManager.SENSOR_DELAY_UI)
         sMgr.registerListener(this, magField, SensorManager.SENSOR_DELAY_UI)
 
-
-       /* findViewById<Button>(R.id.plusZ).setOnClickListener{
-            glView.camera.translate(0f, 0f, 1f)
-        }
-        findViewById<Button>(R.id.minusZ).setOnClickListener{
-            glView.camera.translate(0f, 0f, -1f)
-        }
-        findViewById<Button>(R.id.plusX).setOnClickListener{
-            glView.camera.translate(1f, 0f, 0f)
-        }
-        findViewById<Button>(R.id.minusX).setOnClickListener{
-            glView.camera.translate(-1f, 0f, 0f)
-        }
-        findViewById<Button>(R.id.plusY).setOnClickListener{
-            glView.camera.translate(0f, 1f, 0f)
-        }
-        findViewById<Button>(R.id.minusY).setOnClickListener{
-            glView.camera.translate(0f, -1f, 0f)
-        } */
     }
 
     override fun onSensorChanged(ev: SensorEvent) {
@@ -91,7 +68,7 @@ class OpenGLActivity: AppCompatActivity(), SensorEventListener {
         }
 
 
-        /*
+
         SensorManager.getRotationMatrix(orientationMatrix, null, accelValues, magFieldValues)
         val remapped = FloatArray(16)
         SensorManager.remapCoordinateSystem(orientationMatrix, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, remapped)
@@ -99,7 +76,7 @@ class OpenGLActivity: AppCompatActivity(), SensorEventListener {
 
         SensorManager.getOrientation(orientationMatrix, orientations)
         val deg = orientations.map {it * 180.0/Math.PI}
-        Log.d("gltestlog", "Orientations ${deg[0]} ${deg[1]} ${deg[2]}")*/
+        //Log.d("gltestlog", "Orientations ${deg[0]} ${deg[1]} ${deg[2]}")
     }
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
