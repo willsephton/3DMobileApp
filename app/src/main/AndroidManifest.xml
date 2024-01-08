@@ -35,7 +35,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".FeatureChoice" android:label="@string/featureChoice"></activity>
-        <activity android:name=".OpenGLActivity" android:label="@string/opengl"></activity>
+        <activity android:name=".OpenGLActivity" android:label="@string/opengl" android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"></activity>
     </application>
 
 </manifest>
