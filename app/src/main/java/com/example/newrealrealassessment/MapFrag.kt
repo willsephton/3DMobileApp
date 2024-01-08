@@ -80,7 +80,7 @@ class MapFrag : Fragment() {
             points?.let { list ->
                 list.forEach { element ->
                     val latlon = GeoPoint(element.lat, element.lon)
-                    addMarker2(
+                    addMarker(
                         latlon,
                         element.name,
                         element.featureType
@@ -100,25 +100,7 @@ class MapFrag : Fragment() {
         mapView.invalidate()
     }
 
-    fun addMarker(name: String, featureType: String, lon: Double, lat: Double, map1: MapView) {
-        val markerGestureListener = object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
-            override fun onItemLongPress(i: Int, item: OverlayItem): Boolean {
-                Toast.makeText(requireContext(), item.snippet, Toast.LENGTH_SHORT).show()
-                return true
-            }
-
-            override fun onItemSingleTapUp(i: Int, item: OverlayItem): Boolean {
-                Toast.makeText(requireContext(), item.title, Toast.LENGTH_SHORT).show()
-                return true
-            }
-        }
-        val items = ItemizedIconOverlay(requireContext(), arrayListOf<OverlayItem>(), markerGestureListener)
-        val newMarker = OverlayItem(name, featureType, GeoPoint(lat, lon))
-        items.addItem(newMarker)
-        map1.overlays.add(items)
-    }
-
-    private fun addMarker2(geoPoint: GeoPoint, name: String, featureType: String) {
+    private fun addMarker(geoPoint: GeoPoint, name: String, featureType: String) {
         val marker = Marker(mapView)
         marker.position = geoPoint
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)

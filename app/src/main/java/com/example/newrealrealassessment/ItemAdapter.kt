@@ -17,7 +17,6 @@ class ItemAdapter(private val itemList: MutableList<Item>, private val context: 
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
         // Notification setup
-    private val channelID = "DISTANCE_CHANNEL"
     private val notifiedItems = mutableSetOf<Long>()
 
 

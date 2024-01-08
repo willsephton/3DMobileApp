@@ -10,7 +10,6 @@ import androidx.lifecycle.switchMap
 class RoomViewModel(app: Application): AndroidViewModel(app)  {
 
     var db = PointsOfInterestDatabase.getDatabase(app)
-    lateinit var points : LiveData<List<Item>>
     var selectedFeature = MutableLiveData<String>()
 
 
