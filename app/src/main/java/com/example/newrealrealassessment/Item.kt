@@ -11,5 +11,7 @@ data class Item(
     @ColumnInfo val lon: Double,
     @ColumnInfo val lat: Double,
     @ColumnInfo val name: String,
-    @ColumnInfo val featureType: String
+    @ColumnInfo val featureType: String,
+    @ColumnInfo var distance: Double = 0.0 // Field to hold the distance
+
 )
