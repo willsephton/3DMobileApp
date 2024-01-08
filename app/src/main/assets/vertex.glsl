@@ -1,7 +1,8 @@
 attribute vec4 aVertex;
-uniform mat4 uView, uProj;
+varying vec2 vTextureValue;
 
-void main(void)
+void main (void)
 {
-    gl_Position = uProj * uView * aVertex;
+    gl_Position = aVertex;
+    vTextureValue = vec2(0.5*(1.0 + aVertex.x), 0.5*(1.0 + aVertex.y));
 }

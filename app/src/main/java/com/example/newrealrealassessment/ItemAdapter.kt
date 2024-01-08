@@ -50,14 +50,14 @@ class ItemAdapter(private val itemList: MutableList<Item>, private val context: 
         holder.nameTextView.text = "Name: ${currentItem.name}"
         holder.featureTypeTextView.text = "Feature Type: ${currentItem.featureType}"
 
-        val distance = currentItem.distance
+        var distance = currentItem.distance
         val distanceInKm = distance / 1000 // Convert meters to kilometers
         val formattedDistance = String.format("%.2f", distanceInKm) // Round to 2 decimal places
 
         holder.distanceTextView.text = "Distance: ${formattedDistance}km"
 
         if (currentItem.osm_id !in notifiedItems) {
-            val distance = currentItem.distance
+            distance = currentItem.distance
             if (distance < 100) {
                 sendNotification(currentItem)
                 notifiedItems.add(currentItem.osm_id)
